@@ -45,6 +45,16 @@ class PetCare {
 
     suspend fun registrarEntrada(paciente: Paciente) {
 
+        if (!validarCodigo(paciente.codigo)) {
+            println("Error: Código de atención inválido")
+            return
+        }
+
+        if (!validarTipoDueno(paciente.tipoDueno)) {
+            println("Error: Tipo de dueño inválido")
+            return
+        }
+
         val boxLibre = buscarBoxLibre()
 
         if (boxLibre == null) {
@@ -122,28 +132,53 @@ class PetCare {
 
         delay(6500)
 
-        val monto = pacienteEncontrado.calcularTarifa(tiempoMinutos)
+        try {
 
-        val ticket = Ticket(
-            numeroTicket,
-            pacienteEncontrado,
-            tiempoMinutos,
-            monto
-        )
+            var monto = pacienteEncontrado.calcularTarifa(tiempoMinutos)
 
-        historial.add(ticket)
+            if (monto <= 0) {
+                throw Exception("La tarifa no puede ser menor o igual a cero")
+            }
 
-        println()
-        println("Salida registrada correctamente")
-        println("Ticket: ${ticket.numero}")
-        println("Paciente: ${pacienteEncontrado.nombre}")
-        println("Tiempo: ${ticket.tiempoMinutos} minutos")
-        println("Monto: $${ticket.monto}")
+            monto = monto * 1.19
 
-        numeroTicket++
+            if (pacienteEncontrado.tipoDueno == "municipal") {
+                monto = monto * 0.50
+            }
 
-        boxEncontrado.estado = EstadoBox.Libre("El box está disponible")
+            val ticket = Ticket(
+                numeroTicket,
+                pacienteEncontrado,
+                tiempoMinutos,
+                monto
+            )
 
-        println("Box ${boxEncontrado.numero}: Libre")
+            historial.add(ticket)
+
+            println()
+            println("Salida registrada correctamente")
+            println("Ticket: ${ticket.numero}")
+            println("Paciente: ${pacienteEncontrado.nombre}")
+            println("Tiempo: ${ticket.tiempoMinutos} minutos")
+            println("Monto final: $${ticket.monto}")
+
+            numeroTicket++
+
+            boxEncontrado.estado =
+                EstadoBox.Libre("El box está disponible")
+
+            println("Box ${boxEncontrado.numero}: Libre")
+
+        } catch (e: Exception) {
+
+            println("Error al calcular la tarifa: ${e.message}")
+
+            boxEncontrado.estado = EstadoBox.EnAtencion(pacienteEncontrado)
+
+            println("Box ${boxEncontrado.numero}: En atención")
+            println("Paciente: ${pacienteEncontrado.nombre}")
+        }
+
+
     }
 }
