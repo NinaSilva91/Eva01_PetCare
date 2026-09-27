@@ -61,13 +61,13 @@ class PetCare {
             println("Error: No hay boxes disponibles")
             return
         }
-
+        //Busca el primer box disponible para asignar al paciente.
         boxLibre.estado = EstadoBox.EnProceso("Registrando entrada")
 
         println("Registrando entrada de ${paciente.nombre}")
         println("Box asignado: ${boxLibre.numero}")
         println("Estado: En proceso")
-
+        //Simula la espera de configuración del sensor de entrada.
         delay(3000)
 
         boxLibre.estado = EstadoBox.EnAtencion(paciente)
@@ -130,6 +130,7 @@ class PetCare {
         println("Box: ${boxEncontrado.numero}")
         println("Estado: En proceso")
 
+        // Simula la comunicación con el sensor durante el proceso de salida.
         delay(6500)
 
         try {

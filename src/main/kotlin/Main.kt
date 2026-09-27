@@ -73,6 +73,7 @@ fun main() = runBlocking {
     println()
 
     petCare.registrarSalida("EX77RG", 45)
+
     println()
 
     petCare.mostrarBoxes()
@@ -85,7 +86,8 @@ fun main() = runBlocking {
 
     println()
 
-    val pacientesConvenio = obtenerPacientesConvenio(petCare.pacientes)
+    val pacientesConvenio =
+        obtenerPacientesConvenio(petCare.historial)
 
     println("Pacientes con convenio:")
 
@@ -95,19 +97,22 @@ fun main() = runBlocking {
 
     println()
 
-    val recaudacion = calcularRecaudacion(petCare.historial)
+    val recaudacion =
+        calcularRecaudacion(petCare.historial)
 
     println("Recaudación total: $recaudacion")
 
     println()
 
-    val promedio = calcularPromedioRecaudacion(petCare.historial)
+    val promedio =
+        calcularPromedioRecaudacion(petCare.historial)
 
     println("Promedio de recaudación por paciente: $promedio")
 
     println()
 
-    val codigosFinalizados = obtenerCodigosFinalizados(petCare.historial)
+    val codigosFinalizados =
+        obtenerCodigosFinalizados(petCare.historial)
 
     println("Pacientes finalizados:")
 

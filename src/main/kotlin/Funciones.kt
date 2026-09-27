@@ -34,12 +34,16 @@ fun contarBoxesDisponibles(boxes: List<Box>): Int {
 }
 
 fun obtenerPacientesConvenio(
-    pacientes: List<Paciente>
+    historial: List<Ticket>
 ): List<Paciente> {
 
-    return pacientes.filter {
-        it.tipoDueno == "convenio"
-    }
+    return historial
+        .filter {
+            it.paciente.tipoDueno == "convenio"
+        }
+        .map {
+            it.paciente
+        }
 }
 
 fun calcularRecaudacion(
@@ -155,10 +159,18 @@ fun mostrarInformeCierre(
         println("Ticket: ${ticket.numero}")
         println("Tipo: $tipo")
         println("Código: ${ticket.paciente.codigo}")
+
+        if (ticket.paciente is Exotico) {
+            if (ticket.paciente.silvestre) {
+                println("Silvestre: Sí")
+            } else {
+                println("Silvestre: No")
+            }
+        }
+
         println("Tiempo: ${ticket.tiempoMinutos} minutos")
         println("Monto: $${ticket.monto}")
         println("---------------------------------------")
-    }
 
     val total = calcularRecaudacion(historial)
     val cantidad = historial.size
