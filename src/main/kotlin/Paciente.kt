@@ -12,6 +12,6 @@ open class Paciente(
     }
 
     open fun mostrarInformacion(): String {
-        return "Código: $codigo, Nombre: $nombre, Especie: $especie, Dueño: $tipoDueno"
+        return "Codigo: $codigo, Nombre: $nombre, Especie: $especie, Dueño: $tipoDueno"
     }
 }

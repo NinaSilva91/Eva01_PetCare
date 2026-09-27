@@ -1,17 +1,12 @@
 package org.example
-
 import kotlinx.coroutines.delay
 
 class PetCare {
 
     val nombre = "PetCare"
-
     val boxes = mutableListOf<Box>()
-
     val pacientes = mutableListOf<Paciente>()
-
     val historial = mutableListOf<Ticket>()
-
     var numeroTicket = 1
 
     init {
@@ -19,55 +14,44 @@ class PetCare {
             boxes.add(Box(i))
         }
     }
-
     fun buscarBoxLibre(): Box? {
-
         for (box in boxes) {
-
             when (box.estado) {
-
-                is EstadoBox.Libre ->
+                is EstadoBox.Libre -> {
                     return box
-
-                is EstadoBox.EnAtencion ->
-                    println("Box ${box.numero} está en atención")
-
-                is EstadoBox.EnProceso ->
-                    println("Box ${box.numero} está en proceso")
-
-                is EstadoBox.FueraDeServicio ->
-                    println("Box ${box.numero} está fuera de servicio")
+                }
+                is EstadoBox.EnAtencion -> {
+                }
+                is EstadoBox.EnProceso -> {
+                }
+                is EstadoBox.FueraDeServicio -> {
+                }
             }
         }
-
         return null
     }
-
     suspend fun registrarEntrada(paciente: Paciente) {
-
         if (!validarCodigo(paciente.codigo)) {
-            println("Error: Código de atención inválido")
+            println("Error: Codigo de atencion invalido")
+            return
+        }
+        if (!validarTipoDueno(paciente.tipoDueno)) { println("Error: Tipo de dueno invalido")
             return
         }
 
-        if (!validarTipoDueno(paciente.tipoDueno)) {
-            println("Error: Tipo de dueño inválido")
-            return
-        }
-
+        // Busca el primer box disponible para asignar al paciente.
         val boxLibre = buscarBoxLibre()
 
-        if (boxLibre == null) {
-            println("Error: No hay boxes disponibles")
+        if (boxLibre == null) { println("Error: No hay boxes disponibles")
             return
         }
-        //Busca el primer box disponible para asignar al paciente.
         boxLibre.estado = EstadoBox.EnProceso("Registrando entrada")
 
         println("Registrando entrada de ${paciente.nombre}")
         println("Box asignado: ${boxLibre.numero}")
         println("Estado: En proceso")
-        //Simula la espera de configuración del sensor de entrada.
+
+        // Simula la espera de confirmacion del sensor de entrada.
         delay(3000)
 
         boxLibre.estado = EstadoBox.EnAtencion(paciente)
@@ -75,7 +59,7 @@ class PetCare {
         pacientes.add(paciente)
 
         println("Entrada registrada correctamente")
-        println("Box ${boxLibre.numero}: En atención")
+        println("Box ${boxLibre.numero}: En atencion")
         println("Paciente: ${paciente.nombre}")
     }
 
@@ -85,42 +69,32 @@ class PetCare {
         println("Cantidad de boxes: ${boxes.size}")
         println()
 
-        for (box in boxes) {
-            box.mostrarEstado()
+        for (box in boxes) {box.mostrarEstado()
         }
     }
-    suspend fun registrarSalida(codigo: String, tiempoMinutos: Int) {
 
+    suspend fun registrarSalida(codigo: String, tiempoMinutos: Int) {
         var boxEncontrado: Box? = null
         var pacienteEncontrado: Paciente? = null
 
         for (box in boxes) {
-
             when (val estadoActual = box.estado) {
-
                 is EstadoBox.Libre -> {
                 }
-
                 is EstadoBox.EnAtencion -> {
-
                     if (estadoActual.paciente.codigo == codigo) {
                         boxEncontrado = box
                         pacienteEncontrado = estadoActual.paciente
                     }
                 }
-
                 is EstadoBox.EnProceso -> {
-                    println("Box ${box.numero} está en proceso")
                 }
-
                 is EstadoBox.FueraDeServicio -> {
-                    println("Box ${box.numero} está fuera de servicio")
                 }
             }
         }
 
-        if (boxEncontrado == null || pacienteEncontrado == null) {
-            println("Error: Paciente no encontrado")
+        if (boxEncontrado == null || pacienteEncontrado == null) {println("Error: Paciente no encontrado")
             return
         }
 
@@ -130,30 +104,21 @@ class PetCare {
         println("Box: ${boxEncontrado.numero}")
         println("Estado: En proceso")
 
-        // Simula la comunicación con el sensor durante el proceso de salida.
+        // Simula la comunicacion con el sensor durante la salida.
         delay(6500)
 
         try {
-
             var monto = pacienteEncontrado.calcularTarifa(tiempoMinutos)
-
             if (monto <= 0) {
-                throw Exception("La tarifa no puede ser menor o igual a cero")
+                throw Exception(
+                    "La tarifa no puede ser menor o igual a cero"
+                )
             }
-
             monto = monto * 1.19
-
             if (pacienteEncontrado.tipoDueno == "municipal") {
                 monto = monto * 0.50
             }
-
-            val ticket = Ticket(
-                numeroTicket,
-                pacienteEncontrado,
-                tiempoMinutos,
-                monto
-            )
-
+            val ticket = Ticket(numeroTicket, pacienteEncontrado, tiempoMinutos, monto)
             historial.add(ticket)
 
             println()
@@ -162,24 +127,16 @@ class PetCare {
             println("Paciente: ${pacienteEncontrado.nombre}")
             println("Tiempo: ${ticket.tiempoMinutos} minutos")
             println("Monto final: $${ticket.monto}")
-
             numeroTicket++
 
-            boxEncontrado.estado =
-                EstadoBox.Libre("El box está disponible")
-
+            boxEncontrado.estado = EstadoBox.Libre("El box esta disponible")
             println("Box ${boxEncontrado.numero}: Libre")
-
         } catch (e: Exception) {
-
             println("Error al calcular la tarifa: ${e.message}")
 
             boxEncontrado.estado = EstadoBox.EnAtencion(pacienteEncontrado)
-
-            println("Box ${boxEncontrado.numero}: En atención")
+            println("Box ${boxEncontrado.numero}: En atencion")
             println("Paciente: ${pacienteEncontrado.nombre}")
         }
-
-
     }
 }

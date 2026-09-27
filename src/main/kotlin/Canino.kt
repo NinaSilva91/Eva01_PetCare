@@ -8,14 +8,10 @@ class Canino(
 ) : Paciente(codigo, nombre, especie, fechaIngreso, tipoDueno) {
 
     override fun calcularTarifa(tiempoMinutos: Int): Double {
-
         val tarifaBase = 12000.0
         var monto = tarifaBase * tiempoMinutos / 60
 
-        if (tipoDueno == "convenio") {
-            monto = monto * 0.80
-        }
-
+        if (tipoDueno == "convenio") { monto = monto * 0.80 }
         return monto
     }
 

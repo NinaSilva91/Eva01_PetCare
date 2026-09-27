@@ -9,11 +9,9 @@ class Felino(
 ) : Paciente(codigo, nombre, especie, fechaIngreso, tipoDueno) {
 
     override fun calcularTarifa(tiempoMinutos: Int): Double {
-
         if (tiempoMinutos < 20) {
             return 0.0
         }
-
         val tarifaBase = 9000.0
         return tarifaBase * tiempoMinutos / 60
     }
